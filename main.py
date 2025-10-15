@@ -19,4 +19,4 @@ async def get_log_pas(log_pas : LogPas):
     with open("users.json", "w") as file:
         json.dump(data, file, indent=4)
 
-    return ...
+    return log_pas
