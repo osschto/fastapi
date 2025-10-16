@@ -6,17 +6,32 @@ app = FastAPI()
 
 data = {}
 
-class LogPas(BaseModel):
+class Reg(BaseModel):
     log : str
     pas : str
 
-@app.post("/register/", tags=["Регистрация"], summary="Получение логина и пароля")
-async def get_log_pas(log_pas : LogPas):
+class Log(BaseModel):
+    log : str
+    pas : str
 
-    hash_password = hashlib.sha256(log_pas.pas.encode()).hexdigest()
-    data[log_pas.log] = hash_password
+@app.post("/register/", tags=["Регистрация"], summary="Регистрация")
+async def get_log_pas(reg : Reg):
+    hash_reg_password = hashlib.sha256(reg.pas.encode()).hexdigest()
+    data[reg.log] = hash_reg_password
 
-    with open("users.json", "w") as file:
-        json.dump(data, file, indent=4)
+    with open("users.json", "w") as f:
+        json.dump(data, f, indent=4)
 
-    return log_pas
+@app.post("/authorize/", tags=["Авторизация"], summary="Вход")
+async def auth(log : Log):
+    with open("users.json", "r") as f:
+        data = json.load(f)
+    
+    if log.log in data:
+        hash_log_password = hashlib.sha256(log.pas.encode()).hexdigest()
+        if hash_log_password == data[log.log]:
+            return {"msg" : "Успешный вход"}
+        else:
+            return {"msg" : "Неверный пароль"}
+    else:
+        return {"msg" : "Пользователь не найден"}
