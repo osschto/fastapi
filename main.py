@@ -14,7 +14,7 @@ class Log(BaseModel):
     log : str
     pas : str
 
-@app.post("/register/", tags=["Регистрация"], summary="Регистрация")
+@app.post("/register/", tags=["Регистрация/Авторизация"], summary="Регистрация")
 async def get_log_pas(reg : Reg):
     hash_reg_password = hashlib.sha256(reg.pas.encode()).hexdigest()
     data[reg.log] = hash_reg_password
@@ -22,7 +22,7 @@ async def get_log_pas(reg : Reg):
     with open("users.json", "w") as f:
         json.dump(data, f, indent=4)
 
-@app.post("/authorize/", tags=["Авторизация"], summary="Вход")
+@app.post("/authorize/", tags=["Регистрация/Авторизация"], summary="Авторизация")
 async def auth(log : Log):
     with open("users.json", "r") as f:
         data = json.load(f)
